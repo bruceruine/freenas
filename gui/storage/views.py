@@ -1243,9 +1243,7 @@ def vmwareplugin_datastores(request):
                 'username': request.POST.get('username'),
                 'password': password,
             })
-        data['value'] = []
-        for i in ds.values():
-            data['value'] += i.keys()
+        data['value'] = list(ds)
     except Exception as e:
         data['error'] = True
         data['errmsg'] = str(e)
