@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import errno
 import socket
 import ssl
@@ -93,7 +95,16 @@ class VMWareService(CRUDService):
             datastores[esxi_host.name] = datastores_host
 
         connect.Disconnect(server_instance)
-        return datastores
+
+        # Datastore names are unique among different esxi host under a single vcenter server. As we only require
+        # datastore names and additional information is not needed for datastore choices, we refine the datastores
+        # dict and send back only the datastore names
+
+        return OrderedDict({
+            name: name for name in sorted(
+                name for host in datastores.values() for name in host
+            )
+        })
 
     @accepts(Int('pk'))
     async def get_virtual_machines(self, pk):
